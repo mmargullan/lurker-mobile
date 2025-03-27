@@ -5,6 +5,12 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import kz.lurker.service.LoginRequest
+import kz.lurker.service.RetrofitInstance
 
 class MainActivity : AppCompatActivity() {
 
@@ -21,11 +27,28 @@ class MainActivity : AppCompatActivity() {
             val password = etPassword.text.toString().trim()
 
             if (username.isEmpty() || password.isEmpty()) {
-                Toast.makeText(this, "Введите логин и пароль", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Enter username and password", Toast.LENGTH_SHORT).show()
             } else {
-                print("Успешный вход")
-                Toast.makeText(this, "Успешный вход", Toast.LENGTH_SHORT).show()
+                loginUser(username, password)
             }
         }
     }
+
+    private fun loginUser(username: String, password: String) {
+        lifecycleScope.launch {
+            try {
+                val response = withContext(Dispatchers.IO) {
+                    RetrofitInstance.api.login(LoginRequest(username, password))
+                }
+                if (response.isSuccessful) {
+                    Toast.makeText(this@MainActivity, "Success", Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(this@MainActivity, "Error logging in: ${response.body()?.message}", Toast.LENGTH_SHORT).show()
+                }
+            } catch (e: Exception) {
+                Toast.makeText(this@MainActivity, "Internal server error: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
 }

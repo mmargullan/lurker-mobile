@@ -5,8 +5,28 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
+import io.ktor.client.*
+import io.ktor.client.call.*
+import io.ktor.client.engine.okhttp.*
+import io.ktor.client.request.*
+import io.ktor.client.statement.*
+import io.ktor.http.*
+import io.ktor.serialization.kotlinx.json.*
+import io.ktor.client.plugins.contentnegotiation.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.Json
 
 class MainActivity : AppCompatActivity() {
+
+    private val client = HttpClient(OkHttp) {
+        install(ContentNegotiation) {
+            json(Json { ignoreUnknownKeys = true })
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -21,11 +41,49 @@ class MainActivity : AppCompatActivity() {
             val password = etPassword.text.toString().trim()
 
             if (username.isEmpty() || password.isEmpty()) {
-                Toast.makeText(this, "Введите логин и пароль", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Enter username and password", Toast.LENGTH_SHORT).show()
             } else {
-                print("Успешный вход")
-                Toast.makeText(this, "Успешный вход", Toast.LENGTH_SHORT).show()
+                loginUser(username, password)
             }
         }
     }
+
+    private fun loginUser(username: String, password: String) {
+        lifecycleScope.launch {
+            try {
+                val response = makeLoginRequest(username, password)
+                if (response.status == HttpStatusCode.OK) {
+                    val responseBody = response.body<LoginResponse>()
+                    Toast.makeText(this@MainActivity, "Login successful, status: ${responseBody.login_status}", Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(this@MainActivity, "Login failed: ${response.status}", Toast.LENGTH_SHORT).show()
+                }
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(this@MainActivity, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
+
+    private suspend fun makeLoginRequest(username: String, password: String): HttpResponse {
+        return client.post("https://platonus.iitu.edu.kz/rest/api/login") {
+            contentType(ContentType.Application.Json)
+            setBody(LoginRequest(username, password))
+        }
+    }
+
+    @Serializable
+    data class LoginRequest(
+        val login: String,
+        val password: String
+    )
+
+    @Serializable
+    data class LoginResponse(
+        val auth_token: String,
+        val login_status: String,
+        val sid: String
+    )
+
 }

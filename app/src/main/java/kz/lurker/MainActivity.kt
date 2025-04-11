@@ -101,7 +101,7 @@ class MainActivity : AppCompatActivity() {
         val role = sharedPreferences.getString("role", null)
         val firstName = sharedPreferences.getString("firstName", null)
         val lastName = sharedPreferences.getString("lastName", null)
-        val gpa = sharedPreferences.getFloat("gpa", 0f).toDouble()
+        val gpa = String.format("%.2f", sharedPreferences.getFloat("gpa", 0f).toDouble()).toDouble()
         val phone = sharedPreferences.getString("phone", null)
         val courseNumber = sharedPreferences.getInt("courseNumber", -1)
         val education = sharedPreferences.getString("education", null)
@@ -109,7 +109,7 @@ class MainActivity : AppCompatActivity() {
         val birthDate = sharedPreferences.getString("birthDate", null)
 
         val groupName = sharedPreferences.getString("groupName", null)
-        val groupAverageGpa = sharedPreferences.getFloat("groupAverageGpa", 0f).toDouble()
+        val groupAverageGpa = String.format("%.2f", sharedPreferences.getFloat("groupAverageGpa", 0f).toDouble()).toDouble()
         val groupStudentCount = sharedPreferences.getInt("groupStudentCount", -1)
 
         return if (login != null && password != null && role != null && firstName != null && lastName != null) {

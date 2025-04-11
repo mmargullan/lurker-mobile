@@ -16,6 +16,7 @@ import io.ktor.serialization.kotlinx.json.json
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
+import kz.lurker.model.Group
 import kz.lurker.model.User
 import kz.lurker.service.TokenService
 
@@ -37,7 +38,14 @@ class MainActivity : AppCompatActivity() {
         tokenService = TokenService(application)
 
         userInfoTextView = findViewById(R.id.userInfoTextView)
-        getUserInfo()
+
+        val user = getUserInfoFromPrefs()
+        if (user != null) {
+            displayUserInfo(user)
+        } else {
+            getUserInfo()
+        }
+
     }
 
     private fun getUserInfo() {
@@ -48,21 +56,70 @@ class MainActivity : AppCompatActivity() {
                 }
                 if (response.status == HttpStatusCode.OK) {
                     val userInfo = response.body<User>()
-                    showError("Success")
+                    saveUser(userInfo)
                     displayUserInfo(userInfo)
                 } else {
                     throw Exception("Failed to get user data: ${response.status}")
-                    showError("Failed to get user data: ${response.status}")
                 }
             } catch (e: Exception) {
                 throw e
-                showError("Error: ${e.message}")
             }
         }
     }
 
     private fun displayUserInfo(user: User) {
         userInfoTextView.text = "GPA: ${user.gpa}\nRole: ${user.role}\nName: ${user.firstName} ${user.lastName}"
+    }
+
+    private fun saveUser(user: User) {
+        val sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+
+        editor.putString("login", user.login)
+        editor.putString("password", user.password)
+        editor.putString("role", user.role)
+        editor.putString("firstName", user.firstName)
+        editor.putString("lastName", user.lastName)
+        editor.putFloat("gpa", user.gpa.toFloat())
+        editor.putString("phone", user.phone)
+        editor.putInt("courseNumber", user.courseNumber)
+        editor.putString("education", user.education)
+        editor.putString("address", user.address)
+        editor.putString("birthDate", user.birthDate)
+        editor.putString("groupName", user.group.name)
+        editor.putFloat("groupAverageGpa", user.group.averageGpa.toFloat())
+        editor.putInt("groupStudentCount", user.group.studentCount)
+
+        editor.apply()
+    }
+
+    private fun getUserInfoFromPrefs(): User? {
+        val sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE)
+
+        val login = sharedPreferences.getString("login", null)
+        val password = sharedPreferences.getString("password", null)
+        val role = sharedPreferences.getString("role", null)
+        val firstName = sharedPreferences.getString("firstName", null)
+        val lastName = sharedPreferences.getString("lastName", null)
+        val gpa = sharedPreferences.getFloat("gpa", 0f).toDouble()
+        val phone = sharedPreferences.getString("phone", null)
+        val courseNumber = sharedPreferences.getInt("courseNumber", -1)
+        val education = sharedPreferences.getString("education", null)
+        val address = sharedPreferences.getString("address", null)
+        val birthDate = sharedPreferences.getString("birthDate", null)
+
+        val groupName = sharedPreferences.getString("groupName", null)
+        val groupAverageGpa = sharedPreferences.getFloat("groupAverageGpa", 0f).toDouble()
+        val groupStudentCount = sharedPreferences.getInt("groupStudentCount", -1)
+
+        return if (login != null && password != null && role != null && firstName != null && lastName != null) {
+            User(
+                login, password, role, firstName, lastName, gpa, phone ?: "", courseNumber,
+                education ?: "", address ?: "", birthDate ?: "", Group(groupName ?: "", groupStudentCount, groupAverageGpa)
+            )
+        } else {
+            null
+        }
     }
 
     private fun showError(message: String) {

@@ -1,10 +1,12 @@
 package kz.lurker.ui
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.*
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
+import kz.lurker.MainActivity
 import kz.lurker.viewmodel.LoginViewModel
 import kz.lurker.R
 import kz.lurker.viewmodel.LoginViewModelFactory
@@ -24,13 +26,24 @@ class LoginActivity : AppCompatActivity() {
         val btnLogin = findViewById<Button>(R.id.btnLogin)
 
         btnLogin.setOnClickListener {
-            val username = etUsername.text.toString()
-            val password = etPassword.text.toString()
-            viewModel.login(username, password)
+            val username = etUsername.text.toString().trim()
+            val password = etPassword.text.toString().trim()
+
+            if (username.isEmpty() || password.isEmpty()) {
+                Toast.makeText(this, "Enter username and password", Toast.LENGTH_SHORT).show()
+            } else {
+                viewModel.login(username, password)
+            }
+
         }
 
         viewModel.loginResult.observe(this, Observer { result ->
             Toast.makeText(this, result, Toast.LENGTH_SHORT).show()
+            if (result == "Login successful") {
+                val intent = Intent(this, MainActivity::class.java)
+                startActivity(intent)
+                finish()
+            }
         })
     }
 

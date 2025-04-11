@@ -1,5 +1,6 @@
 package kz.lurker
 
+import android.content.Context
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
@@ -19,6 +20,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
+import kz.lurker.service.TokenService
 
 class MainActivity : AppCompatActivity() {
 
@@ -54,7 +56,8 @@ class MainActivity : AppCompatActivity() {
                 val response = makeLoginRequest(username, password)
                 if (response.status == HttpStatusCode.OK) {
                     val responseBody = response.body<LoginResponse>()
-                    Toast.makeText(this@MainActivity, "Login successful, status: ${responseBody.login_status}", Toast.LENGTH_SHORT).show()
+                    TokenService(context = this@MainActivity).saveToken(responseBody.token)
+                    Toast.makeText(this@MainActivity, "Login successful, status: ${responseBody.status}", Toast.LENGTH_SHORT).show()
                 } else {
                     Toast.makeText(this@MainActivity, "Login failed: ${response.status}", Toast.LENGTH_SHORT).show()
                 }
@@ -67,7 +70,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private suspend fun makeLoginRequest(username: String, password: String): HttpResponse {
-        return client.post("https://platonus.iitu.edu.kz/rest/api/login") {
+        return client.post("http://10.0.2.2:8081/user/login") {
             contentType(ContentType.Application.Json)
             setBody(LoginRequest(username, password))
         }
@@ -81,9 +84,9 @@ class MainActivity : AppCompatActivity() {
 
     @Serializable
     data class LoginResponse(
-        val auth_token: String,
-        val login_status: String,
-        val sid: String
+        val message: String,
+        val status: String,
+        val token: String
     )
 
 }

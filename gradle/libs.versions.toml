@@ -12,8 +12,10 @@ constraintlayout = "2.2.0"
 ktor = "2.3.6"
 kotlinx-serialization-json = "1.6.3"
 securityCrypto = "1.1.0-alpha06"
+lifecycle-viewmodel-ktx = "2.7.0"
 
 [libraries]
+androidx-lifecycle-viewmodel-ktx = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", version.ref = "lifecycle-viewmodel-ktx" }
 androidx-security-crypto = { group = "androidx.security", name = "security-crypto", version.ref = "securityCrypto" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }

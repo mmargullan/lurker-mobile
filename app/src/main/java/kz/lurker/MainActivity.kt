@@ -14,9 +14,7 @@ import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.coroutines.launch
-import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
-import kz.lurker.model.Group
 import kz.lurker.model.User
 import kz.lurker.service.TokenService
 
@@ -30,30 +28,33 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private lateinit var userInfoTextView: TextView
+    private lateinit var amUserName: TextView
+    private lateinit var amGroupName: TextView
+    private lateinit var amGroupRating: TextView
+    private lateinit var amCourseNo: TextView
+    private lateinit var amGPA: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         tokenService = TokenService(application)
 
-        userInfoTextView = findViewById(R.id.userInfoTextView)
+        amUserName = findViewById(R.id.amUserName)
+        amGroupName = findViewById(R.id.amGroupName)
+        amGPA = findViewById(R.id.amGPA)
+        amCourseNo = findViewById(R.id.amCourseNo)
+        amGroupRating = findViewById(R.id.amGroupRating)
 
-        val user = getUserInfoFromPrefs()
-        if (user != null) {
-            displayUserInfo(user)
-        } else {
-            getUserInfo()
-        }
-
+        getUserInfo(tokenService.getToken())
     }
 
-    private fun getUserInfo() {
+    private fun getUserInfo(token: String?) {
         lifecycleScope.launch {
             try {
-                val response = client.get("http://10.0.2.2:8081/user/getUser") {
-                     headers.append(HttpHeaders.Authorization, "Bearer ${tokenService.getToken()}")
+                val response = client.get("https://test-student-forum.serveo.net/api/auth-api/user/getUser") {
+                     headers.append(HttpHeaders.Authorization, "Bearer $token")
                 }
+
                 if (response.status == HttpStatusCode.OK) {
                     val userInfo = response.body<User>()
                     saveUser(userInfo)
@@ -67,8 +68,26 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun getStudentRating(groupId: Long) {
+        lifecycleScope.launch {
+            try {
+                val rating = client.get("https://test-student-forum.serveo.net/api/auth-api/group/getStudentRating/${groupId}"){
+                    headers.append(HttpHeaders.Authorization, "Bearer ${tokenService.getToken()}")
+                }.body<Int>()
+
+                amGroupRating.text = rating.toString()
+            } catch (e: Exception) {
+                throw e
+            }
+        }
+    }
+
     private fun displayUserInfo(user: User) {
-        userInfoTextView.text = "GPA: ${user.gpa}\nRole: ${user.role}\nName: ${user.firstName} ${user.lastName}"
+        amUserName.text = "${user.firstName} ${user.lastName}"
+        amGroupName.text = user.group.name
+        amGPA.text= user.gpa.toString()
+        amCourseNo.text = user.courseNumber.toString()
+        getStudentRating(user.group.id)
     }
 
     private fun saveUser(user: User) {
@@ -89,37 +108,9 @@ class MainActivity : AppCompatActivity() {
         editor.putString("groupName", user.group.name)
         editor.putFloat("groupAverageGpa", user.group.averageGpa.toFloat())
         editor.putInt("groupStudentCount", user.group.studentCount)
+        editor.putLong("groupId", user.group.id)
 
         editor.apply()
-    }
-
-    private fun getUserInfoFromPrefs(): User? {
-        val sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE)
-
-        val login = sharedPreferences.getString("login", null)
-        val password = sharedPreferences.getString("password", null)
-        val role = sharedPreferences.getString("role", null)
-        val firstName = sharedPreferences.getString("firstName", null)
-        val lastName = sharedPreferences.getString("lastName", null)
-        val gpa = String.format("%.2f", sharedPreferences.getFloat("gpa", 0f).toDouble()).toDouble()
-        val phone = sharedPreferences.getString("phone", null)
-        val courseNumber = sharedPreferences.getInt("courseNumber", -1)
-        val education = sharedPreferences.getString("education", null)
-        val address = sharedPreferences.getString("address", null)
-        val birthDate = sharedPreferences.getString("birthDate", null)
-
-        val groupName = sharedPreferences.getString("groupName", null)
-        val groupAverageGpa = String.format("%.2f", sharedPreferences.getFloat("groupAverageGpa", 0f).toDouble()).toDouble()
-        val groupStudentCount = sharedPreferences.getInt("groupStudentCount", -1)
-
-        return if (login != null && password != null && role != null && firstName != null && lastName != null) {
-            User(
-                login, password, role, firstName, lastName, gpa, phone ?: "", courseNumber,
-                education ?: "", address ?: "", birthDate ?: "", Group(groupName ?: "", groupStudentCount, groupAverageGpa)
-            )
-        } else {
-            null
-        }
     }
 
     private fun showError(message: String) {

@@ -56,7 +56,8 @@
             android:drawableStart="@android:drawable/ic_dialog_email"
             android:layout_marginTop="16dp"
             android:padding="12dp"
-            android:background="@drawable/rounded_edittext" />
+            android:background="@drawable/bg_rounded_box"
+            android:backgroundTint="#F2F2F2" />
 
         <EditText
             android:id="@+id/etPassword"
@@ -67,7 +68,8 @@
             android:drawableStart="@android:drawable/ic_lock_idle_lock"
             android:layout_marginTop="12dp"
             android:padding="12dp"
-            android:background="@drawable/rounded_edittext" />
+            android:background="@drawable/bg_rounded_box"
+            android:backgroundTint="#F2F2F2"/>
 
         <Button
             android:id="@+id/btnLogin"
@@ -78,7 +80,7 @@
             android:backgroundTint="#6B48FF"
             android:textColor="@android:color/white"
             android:padding="12dp"
-            android:background="@drawable/rounded_button" />
+            android:background="@drawable/bg_rounded_box" />
 
     </LinearLayout>
 

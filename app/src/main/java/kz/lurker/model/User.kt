@@ -20,6 +20,7 @@ data class User(
 
 @Serializable
 data class Group(
+        val id: Long,
         val name: String,
         val studentCount: Int,
         val averageGpa: Double

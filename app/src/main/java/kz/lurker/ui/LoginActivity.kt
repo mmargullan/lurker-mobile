@@ -21,13 +21,6 @@ class LoginActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE)
-        if (sharedPreferences.getString("login", null) != null && sharedPreferences.getString("password", null) != null) {
-            val intent = Intent(this, MainActivity::class.java)
-            startActivity(intent)
-            finish()
-        }
-
         setContentView(R.layout.activity_login)
 
         val etUsername = findViewById<EditText>(R.id.etUsername)

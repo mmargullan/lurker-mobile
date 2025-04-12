@@ -32,7 +32,7 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
     fun login(username: String, password: String) {
         viewModelScope.launch {
             try {
-                val response = client.post("http://10.0.2.2:8081/user/login") {
+                val response = client.post("https://test-student-forum.serveo.net/api/auth-api/user/login") {
                     contentType(ContentType.Application.Json)
                     setBody(LoginRequest(username, password))
                 }

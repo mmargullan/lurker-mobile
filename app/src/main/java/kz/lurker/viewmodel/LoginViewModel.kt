@@ -1,16 +1,22 @@
 package kz.lurker.viewmodel
 
 import android.app.Application
-import android.content.Context
-import androidx.lifecycle.*
-import io.ktor.client.*
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewModelScope
+import io.ktor.client.HttpClient
 import io.ktor.client.call.body
-import io.ktor.client.engine.okhttp.*
-import io.ktor.client.plugins.contentnegotiation.*
-import io.ktor.client.request.*
-import io.ktor.client.statement.*
-import io.ktor.http.*
-import io.ktor.serialization.kotlinx.json.*
+import io.ktor.client.engine.okhttp.OkHttp
+import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.client.request.post
+import io.ktor.client.request.setBody
+import io.ktor.http.ContentType
+import io.ktor.http.HttpStatusCode
+import io.ktor.http.contentType
+import io.ktor.serialization.kotlinx.json.json
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
@@ -32,7 +38,7 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
     fun login(username: String, password: String) {
         viewModelScope.launch {
             try {
-                val response = client.post("http://10.0.2.2:8081/user/login") {
+                val response = client.post("https://test-student-forum.serveo.net/api/auth-api/user/login") {
                     contentType(ContentType.Application.Json)
                     setBody(LoginRequest(username, password))
                 }

@@ -1,15 +1,16 @@
 package kz.lurker.ui
 
 import android.content.Intent
-import android.content.SharedPreferences
 import android.os.Bundle
-import android.widget.*
+import android.widget.Button
+import android.widget.EditText
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import kz.lurker.MainActivity
-import kz.lurker.viewmodel.LoginViewModel
 import kz.lurker.R
+import kz.lurker.viewmodel.LoginViewModel
 import kz.lurker.viewmodel.LoginViewModelFactory
 
 class LoginActivity : AppCompatActivity() {
@@ -36,7 +37,6 @@ class LoginActivity : AppCompatActivity() {
             } else {
                 viewModel.login(username, password)
             }
-
         }
 
         viewModel.loginResult.observe(this, Observer { result ->

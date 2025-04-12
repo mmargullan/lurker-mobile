@@ -14,9 +14,7 @@ import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.coroutines.launch
-import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
-import kz.lurker.model.Group
 import kz.lurker.model.User
 import kz.lurker.service.TokenService
 
@@ -56,6 +54,7 @@ class MainActivity : AppCompatActivity() {
                 val response = client.get("https://test-student-forum.serveo.net/api/auth-api/user/getUser") {
                      headers.append(HttpHeaders.Authorization, "Bearer $token")
                 }
+
                 if (response.status == HttpStatusCode.OK) {
                     val userInfo = response.body<User>()
                     saveUser(userInfo)
@@ -68,6 +67,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
+
     private fun getStudentRating(groupId: Long) {
         lifecycleScope.launch {
             try {
@@ -81,14 +81,13 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
+
     private fun displayUserInfo(user: User) {
         amUserName.text = "${user.firstName} ${user.lastName}"
         amGroupName.text = user.group.name
         amGPA.text= user.gpa.toString()
         amCourseNo.text = user.courseNumber.toString()
-        user.group.id.let { groupId ->
-            getStudentRating(groupId)
-        }
+        getStudentRating(user.group.id)
     }
 
     private fun saveUser(user: User) {

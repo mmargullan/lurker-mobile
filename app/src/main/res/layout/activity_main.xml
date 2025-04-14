@@ -151,7 +151,10 @@
             </LinearLayout>
 
             <!-- Group -->
-            <LinearLayout style="@style/MenuButtonContainer">
+            <LinearLayout style="@style/MenuButtonContainer"
+                android:id="@+id/groupLayout"
+                android:clickable="true"
+                android:focusable="true">
 
                 <TextView
                     style="@style/MenuButtonText"

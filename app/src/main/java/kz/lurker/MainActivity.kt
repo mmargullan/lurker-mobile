@@ -1,6 +1,8 @@
 package kz.lurker
 
+import android.content.Intent
 import android.os.Bundle
+import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -17,6 +19,7 @@ import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 import kz.lurker.model.User
 import kz.lurker.service.TokenService
+import kz.lurker.ui.GroupActivity
 
 class MainActivity : AppCompatActivity() {
 
@@ -46,6 +49,12 @@ class MainActivity : AppCompatActivity() {
         amGroupRating = findViewById(R.id.amGroupRating)
 
         getUserInfo(tokenService.getToken())
+
+        val groupLayout = findViewById<LinearLayout>(R.id.groupLayout)
+        groupLayout.setOnClickListener {
+            val intent = Intent(this, GroupActivity::class.java)
+            startActivity(intent)
+        }
     }
 
     private fun getUserInfo(token: String?) {
@@ -71,9 +80,11 @@ class MainActivity : AppCompatActivity() {
     private fun getStudentRating(groupId: Long) {
         lifecycleScope.launch {
             try {
+                val sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE)
                 val rating = client.get("https://test-student-forum.serveo.net/api/auth-api/group/getStudentRating/${groupId}"){
                     headers.append(HttpHeaders.Authorization, "Bearer ${tokenService.getToken()}")
                 }.body<Int>()
+                sharedPreferences.edit().putInt("groupRating", rating).apply()
 
                 amGroupRating.text = rating.toString()
             } catch (e: Exception) {

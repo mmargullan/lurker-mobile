@@ -25,13 +25,6 @@ class LoginActivity : AppCompatActivity() {
 
         setContentView(R.layout.activity_login)
 
-        val sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE)
-        if (sharedPreferences.getString("login", null) != null && sharedPreferences.getString("password", null) != null) {
-            val intent = Intent(this, MainActivity::class.java)
-            startActivity(intent)
-            finish()
-        }
-
         val etUsername = findViewById<EditText>(R.id.etUsername)
         val etPassword = findViewById<EditText>(R.id.etPassword)
         val btnLogin = findViewById<Button>(R.id.btnLogin)

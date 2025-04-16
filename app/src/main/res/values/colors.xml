@@ -2,4 +2,10 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="progress_low">#e74c3c</color>     <!-- 0–25% красный -->
+    <color name="progress_mid_low">#f1c40f</color> <!-- 25–50% жёлтый -->
+    <color name="progress_mid_high">#3498db</color><!-- 50–75% синий -->
+    <color name="progress_high">#2ecc71</color>    <!-- 75–100% зелёный -->
+    <color name="progress_default">#bdc3c7</color> <!-- серый фон -->
+    <color name="red_700">#d32f2f</color>
 </resources>

@@ -1,6 +1,9 @@
 package kz.lurker
 
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
+import android.view.View            // ← добавили
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -17,11 +20,11 @@ import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 import kz.lurker.model.User
 import kz.lurker.service.TokenService
+import kz.lurker.ui.GradesActivity    // ← добавили
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var tokenService: TokenService
-
     private val client = HttpClient(OkHttp) {
         install(ContentNegotiation) {
             json(Json { ignoreUnknownKeys = true })
@@ -39,11 +42,18 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         tokenService = TokenService(application)
 
-        amUserName = findViewById(R.id.amUserName)
-        amGroupName = findViewById(R.id.amGroupName)
-        amGPA = findViewById(R.id.amGPA)
-        amCourseNo = findViewById(R.id.amCourseNo)
+        amUserName    = findViewById(R.id.amUserName)
+        amGroupName   = findViewById(R.id.amGroupName)
+        amGPA         = findViewById(R.id.amGPA)
+        amCourseNo    = findViewById(R.id.amCourseNo)
         amGroupRating = findViewById(R.id.amGroupRating)
+
+        // Кнопка Grades
+        val btnGrades: View = findViewById(R.id.buttonGrades)
+        btnGrades.setOnClickListener {
+            Log.d("MainActivity", "Opening GradesActivity")
+            startActivity(Intent(this, GradesActivity::class.java))
+        }
 
         getUserInfo(tokenService.getToken())
     }
@@ -51,10 +61,9 @@ class MainActivity : AppCompatActivity() {
     private fun getUserInfo(token: String?) {
         lifecycleScope.launch {
             try {
-                val response = client.get("https://test-student-forum.serveo.net/api/auth-api/user/getUser") {
-                     headers.append(HttpHeaders.Authorization, "Bearer $token")
+                val response = client.get("http://192.168.1.35:8081/user/getUser") {
+                    headers.append(HttpHeaders.Authorization, "Bearer $token")
                 }
-
                 if (response.status == HttpStatusCode.OK) {
                     val userInfo = response.body<User>()
                     saveUser(userInfo)
@@ -63,7 +72,7 @@ class MainActivity : AppCompatActivity() {
                     throw Exception("Failed to get user data: ${response.status}")
                 }
             } catch (e: Exception) {
-                throw e
+                showError(e.message ?: "Unknown error")
             }
         }
     }
@@ -71,50 +80,47 @@ class MainActivity : AppCompatActivity() {
     private fun getStudentRating(groupId: Long) {
         lifecycleScope.launch {
             try {
-                val rating = client.get("https://test-student-forum.serveo.net/api/auth-api/group/getStudentRating/${groupId}"){
+                val rating = client.get("http://192.168.1.35:8081/group/getStudentRating/$groupId") {
                     headers.append(HttpHeaders.Authorization, "Bearer ${tokenService.getToken()}")
                 }.body<Int>()
-
                 amGroupRating.text = rating.toString()
             } catch (e: Exception) {
-                throw e
+                showError(e.message ?: "Unknown error")
             }
         }
     }
 
     private fun displayUserInfo(user: User) {
-        amUserName.text = "${user.firstName} ${user.lastName}"
-        amGroupName.text = user.group.name
-        amGPA.text= user.gpa.toString()
-        amCourseNo.text = user.courseNumber.toString()
+        amUserName.text    = "${user.firstName} ${user.lastName}"
+        amGroupName.text   = user.group.name
+        amGPA.text         = user.gpa.toString()
+        amCourseNo.text    = user.courseNumber.toString()
         getStudentRating(user.group.id)
     }
 
     private fun saveUser(user: User) {
-        val sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE)
-        val editor = sharedPreferences.edit()
-
-        editor.putString("login", user.login)
-        editor.putString("password", user.password)
-        editor.putString("role", user.role)
-        editor.putString("firstName", user.firstName)
-        editor.putString("lastName", user.lastName)
-        editor.putFloat("gpa", user.gpa.toFloat())
-        editor.putString("phone", user.phone)
-        editor.putInt("courseNumber", user.courseNumber)
-        editor.putString("education", user.education)
-        editor.putString("address", user.address)
-        editor.putString("birthDate", user.birthDate)
-        editor.putString("groupName", user.group.name)
-        editor.putFloat("groupAverageGpa", user.group.averageGpa.toFloat())
-        editor.putInt("groupStudentCount", user.group.studentCount)
-        editor.putLong("groupId", user.group.id)
-
-        editor.apply()
+        val prefs = getSharedPreferences("user_prefs", MODE_PRIVATE)
+        with(prefs.edit()) {
+            putString("login", user.login)
+            putString("password", user.password)
+            putString("role", user.role)
+            putString("firstName", user.firstName)
+            putString("lastName", user.lastName)
+            putFloat("gpa", user.gpa.toFloat())
+            putString("phone", user.phone)
+            putInt("courseNumber", user.courseNumber)
+            putString("education", user.education)
+            putString("address", user.address)
+            putString("birthDate", user.birthDate)
+            putString("groupName", user.group.name)
+            putFloat("groupAverageGpa", user.group.averageGpa.toFloat())
+            putInt("groupStudentCount", user.group.studentCount)
+            putLong("groupId", user.group.id)
+            apply()
+        }
     }
 
     private fun showError(message: String) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
-
 }

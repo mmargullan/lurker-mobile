@@ -1,6 +1,7 @@
 package kz.lurker.viewmodel
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -23,6 +24,9 @@ import kotlinx.serialization.json.Json
 import kz.lurker.service.TokenService
 
 class LoginViewModel(application: Application) : AndroidViewModel(application) {
+    companion object {
+        private const val TAG = "LoginVM"
+    }
 
     private val tokenService = TokenService(application)
 
@@ -36,21 +40,33 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
     val loginResult: LiveData<String> = _loginResult
 
     fun login(username: String, password: String) {
+        Log.d(TAG, "login() called with username='$username'")
         viewModelScope.launch {
             try {
-                val response = client.post("https://test-student-forum.serveo.net/api/auth-api/user/login") {
+                Log.d(TAG, "Building HTTP client and request...")
+                val response = client.post("http://192.168.1.35:8081/user/login") {
                     contentType(ContentType.Application.Json)
                     setBody(LoginRequest(username, password))
                 }
 
+                Log.d(TAG, "Request sent. Received HTTP status: ${response.status}")
+
                 if (response.status == HttpStatusCode.OK) {
+                    Log.i(TAG, "Status OK — parsing body")
                     val responseBody = response.body<LoginResponse>()
+                    Log.i(TAG, "Parsed response: message='${responseBody.message}', status='${responseBody.status}', token='${responseBody.token.take(10)}…'")
+
+                    Log.d(TAG, "Saving token to secure prefs")
                     tokenService.saveToken(responseBody.token)
+
                     _loginResult.value = "Login successful"
+                    Log.i(TAG, "LiveData _loginResult set to 'Login successful'")
                 } else {
+                    Log.w(TAG, "Login failed with status ${response.status}")
                     _loginResult.value = "Login failed: ${response.status}"
                 }
             } catch (e: Exception) {
+                Log.e(TAG, "Exception during login: ${e.message}", e)
                 _loginResult.value = "Error: ${e.message}"
             }
         }
@@ -61,7 +77,6 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
 
     @Serializable
     data class LoginResponse(val message: String, val status: String, val token: String)
-
 }
 
 class LoginViewModelFactory(private val application: Application) : ViewModelProvider.Factory {

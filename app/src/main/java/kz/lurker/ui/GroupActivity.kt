@@ -1,6 +1,7 @@
 package kz.lurker.ui
 
 import android.os.Bundle
+import android.view.View
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import kz.lurker.R
@@ -8,7 +9,7 @@ import kz.lurker.R
 class GroupActivity: AppCompatActivity() {
 
     private var groupName: String? = ""
-    private var groupGpa: Double = 0.0
+    private var groupGpa: String? = ""
     private var groupRating: Long = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -19,7 +20,7 @@ class GroupActivity: AppCompatActivity() {
         setContentView(R.layout.activity_group)
 
         groupName = sharedPreferences.getString("groupName", "")
-        groupGpa = sharedPreferences.getFloat("groupAverageGpa", 0.0f).toDouble()
+        groupGpa = sharedPreferences.getString("groupAverageGpa", "")
         groupRating = sharedPreferences.getInt("groupRating", 0).toLong()
 
         var etGroupName = findViewById<TextView>(R.id.etGroupName)

@@ -117,7 +117,7 @@ class MainActivity : AppCompatActivity() {
         editor.putString("address", user.address)
         editor.putString("birthDate", user.birthDate)
         editor.putString("groupName", user.group.name)
-        editor.putFloat("groupAverageGpa", user.group.averageGpa.toFloat())
+        editor.putString("groupAverageGpa", String.format("%.2f", user.group.averageGpa))
         editor.putInt("groupStudentCount", user.group.studentCount)
         editor.putLong("groupId", user.group.id)
 

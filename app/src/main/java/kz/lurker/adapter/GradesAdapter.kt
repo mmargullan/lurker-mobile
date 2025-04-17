@@ -30,7 +30,7 @@ class GradesAdapter(
         holder.tvSubject.text = grade.subjectName
         holder.tvTutors.text = "Преподаватели: ${grade.tutorList}"
 
-        // Фильтрация экзаменов: убираем "Ср.тек. 11", "Ср.тек. 22" и пустые
+
         val filtered = grade.exams
             .filter { !it.name.startsWith("Ср.тек.") }
             .filter { !it.mark.isNullOrBlank() && it.mark != "-" }

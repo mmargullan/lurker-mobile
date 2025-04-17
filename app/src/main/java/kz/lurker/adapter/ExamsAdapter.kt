@@ -38,7 +38,6 @@ class ExamsAdapter(
         holder.progressBar.progress = percent.toInt()
         holder.tvPercent.text = "${percent.toInt()}%"
 
-        // Выбор цвета в зависимости от диапазона
         val colorRes = when {
             percent <= 25f -> R.color.progress_low
             percent <= 50f -> R.color.progress_mid_low

@@ -2,8 +2,7 @@ package kz.lurker
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
-import android.view.View            // ← добавили
+import android.view.View
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -20,7 +19,7 @@ import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 import kz.lurker.model.User
 import kz.lurker.service.TokenService
-import kz.lurker.ui.GradesActivity    // ← добавили
+import kz.lurker.ui.GradesActivity
 
 class MainActivity : AppCompatActivity() {
 
@@ -48,10 +47,8 @@ class MainActivity : AppCompatActivity() {
         amCourseNo    = findViewById(R.id.amCourseNo)
         amGroupRating = findViewById(R.id.amGroupRating)
 
-        // Кнопка Grades
         val btnGrades: View = findViewById(R.id.buttonGrades)
         btnGrades.setOnClickListener {
-            Log.d("MainActivity", "Opening GradesActivity")
             startActivity(Intent(this, GradesActivity::class.java))
         }
 
@@ -61,7 +58,7 @@ class MainActivity : AppCompatActivity() {
     private fun getUserInfo(token: String?) {
         lifecycleScope.launch {
             try {
-                val response = client.get("http://192.168.1.35:8081/user/getUser") {
+                val response = client.get("https://test-student-forum.serveo.net/api/auth-api/user/getUser") {
                     headers.append(HttpHeaders.Authorization, "Bearer $token")
                 }
                 if (response.status == HttpStatusCode.OK) {
@@ -80,7 +77,7 @@ class MainActivity : AppCompatActivity() {
     private fun getStudentRating(groupId: Long) {
         lifecycleScope.launch {
             try {
-                val rating = client.get("http://192.168.1.35:8081/group/getStudentRating/$groupId") {
+                val rating = client.get("https://test-student-forum.serveo.net/api/auth-api/group/getStudentRating/$groupId") {
                     headers.append(HttpHeaders.Authorization, "Bearer ${tokenService.getToken()}")
                 }.body<Int>()
                 amGroupRating.text = rating.toString()

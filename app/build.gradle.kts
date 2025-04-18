@@ -52,4 +52,8 @@ dependencies {
     implementation(libs.ktor.client.content.negotiation)
     implementation(libs.ktor.serialization.kotlinx.json)
     implementation(libs.kotlinx.serialization.json)
+
+    implementation("org.slf4j:slf4j-android:1.7.30")
+    implementation("io.ktor:ktor-client-logging:2.3.5")
+
 }

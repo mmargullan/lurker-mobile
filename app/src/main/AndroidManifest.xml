@@ -32,6 +32,7 @@
             android:name=".ui.GroupActivity"
             android:exported="true">
         </activity>
+        <activity android:name=".ui.GradesActivity" />
     </application>
 
 </manifest>

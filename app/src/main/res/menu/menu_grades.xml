@@ -1,0 +1,14 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/action_select_year"
+        android:title="Year"
+        android:showAsAction="always"/>
+    <item
+        android:id="@+id/action_select_semester"
+        android:title="Semester"
+        android:showAsAction="always"/>
+    <item
+        android:id="@+id/action_home"
+        android:title="Home"
+        android:showAsAction="always"/>
+</menu>

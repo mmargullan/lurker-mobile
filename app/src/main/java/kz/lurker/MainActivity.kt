@@ -2,6 +2,7 @@ package kz.lurker
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -22,11 +23,11 @@ import kz.lurker.model.User
 import kz.lurker.service.TokenService
 import kz.lurker.ui.GroupActivity
 import kz.lurker.ui.LoginActivity
+import kz.lurker.ui.GradesActivity
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var tokenService: TokenService
-
     private val client = HttpClient(OkHttp) {
         install(ContentNegotiation) {
             json(Json { ignoreUnknownKeys = true })
@@ -61,6 +62,11 @@ class MainActivity : AppCompatActivity() {
         }
 
 
+        val btnGrades: View = findViewById(R.id.buttonGrades)
+        btnGrades.setOnClickListener {
+            startActivity(Intent(this, GradesActivity::class.java))
+        }
+
         getUserInfo(tokenService.getToken())
 
         val groupLayout = findViewById<LinearLayout>(R.id.groupLayout)
@@ -74,9 +80,8 @@ class MainActivity : AppCompatActivity() {
         lifecycleScope.launch {
             try {
                 val response = client.get("https://test-student-forum.serveo.net/api/auth-api/user/getUser") {
-                     headers.append(HttpHeaders.Authorization, "Bearer $token")
+                    headers.append(HttpHeaders.Authorization, "Bearer $token")
                 }
-
                 if (response.status == HttpStatusCode.OK) {
                     val userInfo = response.body<User>()
                     saveUser(userInfo)
@@ -94,7 +99,7 @@ class MainActivity : AppCompatActivity() {
         lifecycleScope.launch {
             try {
                 val sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE)
-                val rating = client.get("https://test-student-forum.serveo.net/api/auth-api/group/getStudentRating/${groupId}"){
+                val rating = client.get("https://test-student-forum.serveo.net/api/auth-api/group/getStudentRating/$groupId") {
                     headers.append(HttpHeaders.Authorization, "Bearer ${tokenService.getToken()}")
                 }.body<Int>()
                 sharedPreferences.edit().putInt("groupRating", rating).apply()

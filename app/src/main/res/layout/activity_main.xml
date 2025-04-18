@@ -144,12 +144,14 @@
 
 
             <!-- Grades -->
-            <LinearLayout style="@style/MenuButtonContainer">
-
+            <LinearLayout
+                style="@style/MenuButtonContainer"
+                android:id="@+id/buttonGrades">
                 <TextView
                     style="@style/MenuButtonText"
                     android:text="Grades" />
             </LinearLayout>
+
 
             <!-- Group -->
             <LinearLayout style="@style/MenuButtonContainer"

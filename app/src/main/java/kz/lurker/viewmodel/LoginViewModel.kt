@@ -25,6 +25,7 @@ import kz.lurker.service.TokenService
 class LoginViewModel(application: Application) : AndroidViewModel(application) {
 
     private val tokenService = TokenService(application)
+    private val sharedPreferences = application.getSharedPreferences("user_prefs", Application.MODE_PRIVATE)
 
     private val client = HttpClient(OkHttp) {
         install(ContentNegotiation) {
@@ -47,6 +48,7 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
                     val responseBody = response.body<LoginResponse>()
                     tokenService.saveToken(responseBody.token)
                     _loginResult.value = "Login successful"
+                    sharedPreferences.edit().putBoolean("isLogged", true).apply()
                 } else {
                     _loginResult.value = "Login failed: ${response.status}"
                 }
@@ -62,14 +64,4 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
     @Serializable
     data class LoginResponse(val message: String, val status: String, val token: String)
 
-}
-
-class LoginViewModelFactory(private val application: Application) : ViewModelProvider.Factory {
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return if (modelClass.isAssignableFrom(LoginViewModel::class.java)) {
-            LoginViewModel(application) as T
-        } else {
-            throw IllegalArgumentException("Unknown ViewModel class")
-        }
-    }
 }

@@ -2,6 +2,7 @@ package kz.lurker
 
 import android.content.Intent
 import android.os.Bundle
+import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
@@ -20,6 +21,7 @@ import kotlinx.serialization.json.Json
 import kz.lurker.model.User
 import kz.lurker.service.TokenService
 import kz.lurker.ui.GroupActivity
+import kz.lurker.ui.LoginActivity
 
 class MainActivity : AppCompatActivity() {
 
@@ -39,6 +41,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE)
         setContentView(R.layout.activity_main)
         tokenService = TokenService(application)
 
@@ -47,6 +50,16 @@ class MainActivity : AppCompatActivity() {
         amGPA = findViewById(R.id.amGPA)
         amCourseNo = findViewById(R.id.amCourseNo)
         amGroupRating = findViewById(R.id.amGroupRating)
+
+        val btnLogout = findViewById<Button>(R.id.btnLogout)
+        btnLogout.setOnClickListener {
+            tokenService.clearToken()
+            sharedPreferences.edit().putBoolean("isLogged", false).apply()
+            val intent = Intent(this, LoginActivity::class.java)
+            startActivity(intent)
+            finish()
+        }
+
 
         getUserInfo(tokenService.getToken())
 

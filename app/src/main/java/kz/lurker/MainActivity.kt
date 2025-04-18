@@ -95,28 +95,12 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun getStudentRating(groupId: Long) {
-        lifecycleScope.launch {
-            try {
-                val sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE)
-                val rating = client.get("https://test-student-forum.serveo.net/api/auth-api/group/getStudentRating/$groupId") {
-                    headers.append(HttpHeaders.Authorization, "Bearer ${tokenService.getToken()}")
-                }.body<Int>()
-                sharedPreferences.edit().putInt("groupRating", rating).apply()
-
-                amGroupRating.text = rating.toString()
-            } catch (e: Exception) {
-                throw e
-            }
-        }
-    }
-
     private fun displayUserInfo(user: User) {
         amUserName.text = "${user.firstName} ${user.lastName}"
         amGroupName.text = user.group.name
         amGPA.text= user.gpa.toString()
         amCourseNo.text = user.courseNumber.toString()
-        getStudentRating(user.group.id)
+        amGroupRating.text = user.rating.toString()
     }
 
     private fun saveUser(user: User) {
@@ -134,6 +118,7 @@ class MainActivity : AppCompatActivity() {
         editor.putString("education", user.education)
         editor.putString("address", user.address)
         editor.putString("birthDate", user.birthDate)
+        editor.putInt("rating", user.rating)
         editor.putString("groupName", user.group.name)
         editor.putString("groupAverageGpa", String.format("%.2f", user.group.averageGpa))
         editor.putInt("groupStudentCount", user.group.studentCount)

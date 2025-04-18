@@ -15,6 +15,7 @@ data class User(
     val education: String,
     val address: String,
     val birthDate: String,
+    val rating: Int,
     val group: Group
 )
 

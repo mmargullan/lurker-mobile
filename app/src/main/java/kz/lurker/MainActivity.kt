@@ -52,16 +52,6 @@ class MainActivity : AppCompatActivity() {
         amCourseNo = findViewById(R.id.amCourseNo)
         amGroupRating = findViewById(R.id.amGroupRating)
 
-        val btnLogout = findViewById<Button>(R.id.btnLogout)
-        btnLogout.setOnClickListener {
-            tokenService.clearToken()
-            sharedPreferences.edit().putBoolean("isLogged", false).apply()
-            val intent = Intent(this, LoginActivity::class.java)
-            startActivity(intent)
-            finish()
-        }
-
-
         val btnGrades: View = findViewById(R.id.buttonGrades)
         btnGrades.setOnClickListener {
             startActivity(Intent(this, GradesActivity::class.java))

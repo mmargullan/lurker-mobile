@@ -24,7 +24,7 @@ import kz.lurker.service.TokenService
 import kz.lurker.ui.GroupActivity
 import kz.lurker.ui.LoginActivity
 import kz.lurker.ui.GradesActivity
-
+import kz.lurker.ui.UserActivity
 class MainActivity : AppCompatActivity() {
 
     private lateinit var tokenService: TokenService
@@ -74,6 +74,12 @@ class MainActivity : AppCompatActivity() {
             val intent = Intent(this, GroupActivity::class.java)
             startActivity(intent)
         }
+
+        val btnProfile = findViewById<LinearLayout>(R.id.buttonProfile)
+            btnProfile.setOnClickListener {
+                startActivity(Intent(this, UserActivity::class.java))
+        }
+
     }
 
     private fun getUserInfo(token: String?) {

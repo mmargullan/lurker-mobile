@@ -165,8 +165,11 @@
             </LinearLayout>
 
             <!-- Profile -->
-            <LinearLayout style="@style/MenuButtonContainer">
-
+            <LinearLayout
+                style="@style/MenuButtonContainer"
+                android:id="@+id/buttonProfile"
+                android:clickable="true"
+                android:focusable="true">
                 <TextView
                     style="@style/MenuButtonText"
                     android:text="Profile" />

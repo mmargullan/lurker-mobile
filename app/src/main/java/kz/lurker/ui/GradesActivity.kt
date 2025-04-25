@@ -1,12 +1,13 @@
 package kz.lurker.ui
 
 import android.os.Bundle
-import android.view.Menu
-import android.view.MenuItem
+import android.view.View
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import android.widget.ImageButton
+import android.widget.Spinner
 import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -36,11 +37,39 @@ class GradesActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_grades)
 
-        findViewById<Toolbar>(R.id.toolbar).apply {
-            setTitle("Grades")
-            setTitleTextColor(resources.getColor(android.R.color.white))
-            setBackgroundColor(resources.getColor(R.color.red_700))
-            setSupportActionBar(this)
+        val spinnerYear = findViewById<Spinner>(R.id.spinnerYear)
+        val spinnerSemester = findViewById<Spinner>(R.id.spinnerSemester)
+        val btnBack = findViewById<ImageButton>(R.id.btnBack)
+        btnBack.setOnClickListener {
+            finish()
+        }
+
+        val yearOptions = listOf("2022", "2023", "2024", "2025")
+        val semesterOptions = listOf("1", "2")
+
+        spinnerYear.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, yearOptions)
+        spinnerSemester.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, semesterOptions)
+
+
+        spinnerYear.setSelection(yearOptions.indexOf(selectedYear.toString()))
+        spinnerSemester.setSelection(semesterOptions.indexOf(selectedSemester.toString()))
+
+        spinnerYear.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                selectedYear = yearOptions[position].toInt()
+                fetchGrades()
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) {}
+        }
+
+        spinnerSemester.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                selectedSemester = semesterOptions[position].toInt()
+                fetchGrades()
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) {}
         }
 
         val rv = findViewById<RecyclerView>(R.id.rvCourses)
@@ -49,40 +78,6 @@ class GradesActivity : AppCompatActivity() {
         rv.adapter = adapter
 
         fetchGrades()
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.menu_grades, menu)
-        return true
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean = when (item.itemId) {
-        R.id.action_select_year -> {
-            showPicker("Select Year", arrayOf("2022", "2023", "2024", "2025")) { year ->
-                selectedYear = year.toInt()
-                fetchGrades()
-            }
-            true
-        }
-        R.id.action_select_semester -> {
-            showPicker("Select Semester", arrayOf("1", "2")) { sem ->
-                selectedSemester = sem.toInt()
-                fetchGrades()
-            }
-            true
-        }
-        R.id.action_home -> {
-            finish()
-            true
-        }
-        else -> super.onOptionsItemSelected(item)
-    }
-
-    private fun showPicker(title: String, options: Array<String>, onSelect: (String) -> Unit) {
-        AlertDialog.Builder(this)
-            .setTitle(title)
-            .setItems(options) { _, which -> onSelect(options[which]) }
-            .show()
     }
 
     private fun fetchGrades() {

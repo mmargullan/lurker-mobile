@@ -44,13 +44,11 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
                     setBody(LoginRequest(username, password))
                 }
 
-
                 if (response.status == HttpStatusCode.OK) {
                     val responseBody = response.body<LoginResponse>()
                     tokenService.saveToken(responseBody.token)
 
                     _loginResult.value = "Login successful"
-                    sharedPreferences.edit().putBoolean("isLogged", true).apply()
                 } else {
                     _loginResult.value = "Login failed: ${response.status}"
                 }

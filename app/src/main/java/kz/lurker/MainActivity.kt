@@ -1,13 +1,17 @@
 package kz.lurker
 
+import android.Manifest
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.view.View
-import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
@@ -20,11 +24,12 @@ import io.ktor.serialization.kotlinx.json.json
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 import kz.lurker.model.User
+import kz.lurker.service.NotificationService
 import kz.lurker.service.TokenService
-import kz.lurker.ui.GroupActivity
-import kz.lurker.ui.LoginActivity
 import kz.lurker.ui.GradesActivity
+import kz.lurker.ui.GroupActivity
 import kz.lurker.ui.UserActivity
+
 class MainActivity : AppCompatActivity() {
 
     private lateinit var tokenService: TokenService
@@ -32,6 +37,11 @@ class MainActivity : AppCompatActivity() {
         install(ContentNegotiation) {
             json(Json { ignoreUnknownKeys = true })
         }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        askNotificationPermission()
     }
 
     private lateinit var amUserName: TextView
@@ -45,6 +55,9 @@ class MainActivity : AppCompatActivity() {
         val sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE)
         setContentView(R.layout.activity_main)
         tokenService = TokenService(application)
+
+        val intent = Intent(this, NotificationService::class.java)
+        startService(intent)
 
         amUserName = findViewById(R.id.amUserName)
         amGroupName = findViewById(R.id.amGroupName)
@@ -125,6 +138,25 @@ class MainActivity : AppCompatActivity() {
 
     private fun showError(message: String) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+    }
+
+    private val requestPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted: Boolean ->
+        if (isGranted) {
+            // Разрешение получено
+        } else {
+            // Разрешение отклонено
+        }
+    }
+
+    private fun askNotificationPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) { // Android 13+
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
+                != PackageManager.PERMISSION_GRANTED) {
+                requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+            }
+        }
     }
 
 }

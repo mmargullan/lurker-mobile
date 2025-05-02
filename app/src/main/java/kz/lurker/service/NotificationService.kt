@@ -78,7 +78,7 @@ class NotificationService : Service() {
 
     private suspend fun checkNotifications(userId: String) {
         try {
-            val response = client.get("https://test-student-forum.serveo.net/api/chat-api/notification/getByUserId?userId=$userId")
+            val response = client.get("https://test-student-forum.serveo.net/chat-api/notification/getByUserId?userId=$userId")
             Log.d("NotificationService", "Ответ сервера: ${response.body<String>()}")
             if (response.status == HttpStatusCode.OK) {
                 val notifications = response.body<List<NotificationMessage>>()

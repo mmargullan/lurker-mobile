@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Lurker</string>
+    <string name="notification_channel_name">Chat Notifications</string>
 </resources>

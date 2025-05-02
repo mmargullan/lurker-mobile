@@ -1,6 +1,9 @@
 package kz.lurker
 
 import android.Manifest
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
@@ -47,6 +50,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        createNotificationChannel()
         setContentView(R.layout.activity_main)
         tokenService = TokenService(application)
 
@@ -70,10 +74,24 @@ class MainActivity : AppCompatActivity() {
         getUserInfo(token)
     }
 
+    private fun createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channel = NotificationChannel(
+                NotificationService.CHANNEL_ID,
+                getString(R.string.notification_channel_name),
+                NotificationManager.IMPORTANCE_LOW
+            )
+            val manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            manager.createNotificationChannel(channel)
+        }
+    }
+
     private fun handleNotificationService() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) { // Android O+
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
-                != PackageManager.PERMISSION_GRANTED
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.POST_NOTIFICATIONS
+                ) != PackageManager.PERMISSION_GRANTED
             ) {
                 requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
             } else {
@@ -90,13 +108,12 @@ class MainActivity : AppCompatActivity() {
         if (granted) {
             startNotificationService()
         }
-        // убрал else
     }
 
     private fun startNotificationService() {
         val intent = Intent(this, NotificationService::class.java)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            startForegroundService(intent)
+            ContextCompat.startForegroundService(this, intent)
         } else {
             startService(intent)
         }
@@ -119,7 +136,7 @@ class MainActivity : AppCompatActivity() {
                 } else {
                     Toast.makeText(
                         this@MainActivity,
-                        "Error: ${response.status}",
+                        "Failed to get user data: ${response.status}",
                         Toast.LENGTH_LONG
                     ).show()
                 }

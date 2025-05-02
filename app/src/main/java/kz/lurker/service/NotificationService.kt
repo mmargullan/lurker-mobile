@@ -31,7 +31,9 @@ class NotificationService : Service() {
         }
     }
 
-    private val CHANNEL_ID = "notification_channel"
+    companion object {
+        const val CHANNEL_ID = "notification_channel"
+    }
 
     private val serviceScope = CoroutineScope(Dispatchers.IO)
 

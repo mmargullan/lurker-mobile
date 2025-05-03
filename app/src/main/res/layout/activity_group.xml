@@ -49,8 +49,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:background="@android:color/white"
+                android:background="@drawable/bg_rounded_box"
                 android:elevation="8dp"
+
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
                 android:padding="20dp"

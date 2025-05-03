@@ -44,7 +44,6 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var amUserName: TextView
     private lateinit var amGroupName: TextView
-    private lateinit var amGroupRating: TextView
     private lateinit var amCourseNo: TextView
     private lateinit var amGPA: TextView
 
@@ -58,7 +57,6 @@ class MainActivity : AppCompatActivity() {
         amGroupName = findViewById(R.id.amGroupName)
         amGPA = findViewById(R.id.amGPA)
         amCourseNo = findViewById(R.id.amCourseNo)
-        amGroupRating = findViewById(R.id.amGroupRating)
 
         findViewById<View>(R.id.buttonGrades).setOnClickListener {
             startActivity(Intent(this, GradesActivity::class.java))
@@ -155,7 +153,6 @@ class MainActivity : AppCompatActivity() {
         amGroupName.text = user.group.name
         amGPA.text = user.gpa.toString()
         amCourseNo.text = user.courseNumber.toString()
-        amGroupRating.text = user.rating.toString()
     }
 
     private fun saveUser(user: User) {

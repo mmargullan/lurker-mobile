@@ -18,84 +18,102 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:padding="16dp">
+        android:gravity="center"
+        android:padding="24dp">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Welcome to Thraessa!"
-            android:textSize="22sp"
-            android:textStyle="bold"
-            android:textColor="@android:color/white"
-            android:layout_gravity="center"
-            android:layout_marginTop="32dp"
-            android:layout_marginBottom="24dp" />
-
+        <!-- Top Spacer -->
         <Space
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="0.3" />
+            android:layout_weight="0.15" />
 
+        <!-- Content -->
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="0.6"
+            android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:background="@drawable/button_border"
-            android:padding="24dp"
-            android:elevation="8dp"
-            android:layout_marginHorizontal="8dp"
-            android:clipToPadding="false"
-            android:backgroundTint="#FFFFFF"
-            android:backgroundTintMode="src_over">
+            android:gravity="center_horizontal">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Sign In"
-                android:textSize="20sp"
+                android:text="Welcome back!"
+                android:textSize="30sp"
                 android:textStyle="bold"
-                android:textColor="#000000"
-                android:layout_gravity="center"/>
+                android:textColor="@android:color/white"
+                android:layout_marginBottom="12dp" />
 
-            <EditText
-                android:id="@+id/etUsername"
+            <ImageView
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:src="@drawable/ic_graduation_cap"
+                android:layout_marginBottom="24dp" />
+
+            <!-- Login Card -->
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint=" Email"
-                android:inputType="textEmailAddress"
-                android:drawableStart="@android:drawable/ic_dialog_email"
-                android:layout_marginTop="16dp"
-                android:padding="12dp"
-                android:background="@drawable/bg_rounded_box"
-                android:backgroundTint="#F2F2F2" />
+                android:orientation="vertical"
+                android:background="@drawable/button_border"
+                android:backgroundTint="#FFFFFF"
+                android:padding="24dp"
+                android:elevation="8dp"
+                android:layout_marginHorizontal="8dp"
+                android:clipToPadding="false"
+                android:backgroundTintMode="src_over">
 
-            <EditText
-                android:id="@+id/etPassword"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint=" Password"
-                android:inputType="textPassword"
-                android:drawableStart="@android:drawable/ic_lock_idle_lock"
-                android:layout_marginTop="12dp"
-                android:padding="12dp"
-                android:background="@drawable/bg_rounded_box"
-                android:backgroundTint="#F2F2F2"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Sign In"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:textColor="#000000"
+                    android:layout_gravity="center"
+                    android:layout_marginBottom="12dp" />
 
-            <Button
-                android:id="@+id/btnLogin"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Sign In"
-                android:layout_marginTop="20dp"
-                android:padding="12dp"
-                android:background="@drawable/bg_rounded_box" />
+                <EditText
+                    android:id="@+id/etUsername"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="   Email"
+                    android:inputType="textEmailAddress"
+                    android:drawableStart="@android:drawable/ic_dialog_email"
+                    android:layout_marginTop="8dp"
+                    android:padding="12dp"
+                    android:drawableTint="#C7C7C7"
+                    android:background="@drawable/bg_rounded_box"
+                    android:backgroundTint="#F2F2F2" />
 
+                <EditText
+                    android:id="@+id/etPassword"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="   Password"
+                    android:inputType="textPassword"
+                    android:drawableTint="#C7C7C7"
+                    android:drawableStart="@android:drawable/ic_lock_idle_lock"
+                    android:layout_marginTop="12dp"
+                    android:padding="12dp"
+                    android:background="@drawable/bg_rounded_box"
+                    android:backgroundTint="#F2F2F2"/>
+
+                <Button
+                    android:id="@+id/btnLogin"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Sign In"
+                    android:layout_marginTop="20dp"
+                    android:padding="12dp"
+                    android:background="@drawable/bg_rounded_box"
+                    android:textColor="@android:color/white" />
+            </LinearLayout>
         </LinearLayout>
 
+        <!-- Bottom Spacer -->
         <Space
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="0.3" />
+            android:layout_weight="0.2" />
     </LinearLayout>
 </FrameLayout>

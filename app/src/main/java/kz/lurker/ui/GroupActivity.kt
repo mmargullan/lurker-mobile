@@ -21,7 +21,7 @@ class GroupActivity: AppCompatActivity() {
 
         groupName = sharedPreferences.getString("groupName", "")
         groupGpa = sharedPreferences.getString("groupAverageGpa", "")
-        groupRating = sharedPreferences.getInt("groupRating", 0).toLong()
+        groupRating = sharedPreferences.getInt("rating", 0).toLong()
 
         var etGroupName = findViewById<TextView>(R.id.etGroupName)
         var etGroupGpa = findViewById<TextView>(R.id.etGroupGpa)
